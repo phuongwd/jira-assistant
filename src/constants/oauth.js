@@ -5,7 +5,7 @@ import { JAApiBasePath } from "./urls";
 export const jiraCloudAuthorizeUrl = 'https://auth.atlassian.com/authorize';
 export const jiraCloudScopes = 'offline_access read:jira-user read:jira-work write:jira-work read:sprint:jira-software read:issue-details:jira read:jql:jira read:me';
 export const jiraCloudClientId = process.env.REACT_APP_JIRA_CLIENT_ID;
-export const jiraCloudRedirectUrl = `http://localhost:8089?oauth=jc`;
+export const jiraCloudRedirectUrl = `${process.env.REACT_APP_JIRA_REDIRECT_URL}?oauth=jc`;
 export const jaJiraTokenExchangeUrl = `${JAApiBasePath}/jira/oauth/token`;
 
 export function getJiraCloudOAuthAuthorizeUrl(state) {
