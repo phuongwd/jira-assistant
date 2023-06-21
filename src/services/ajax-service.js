@@ -80,7 +80,6 @@ export default class AjaxService {
             headers = undefined;
         }
 
-      console.log("headers", headers)
         return this.handler(this.execute("GET", this.prepareUrl(url, params), null, headers));
     }
 
