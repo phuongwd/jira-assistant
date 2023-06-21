@@ -61,8 +61,6 @@ export default class AjaxRequestService {
                 referrerPolicy: 'no-referrer',
             };
 
-          console.log("ressss", request)
-
             if (isAppBuild) {
                 return executeService('AjaxRequestService', 'execute', [url, request]);
             } else {
