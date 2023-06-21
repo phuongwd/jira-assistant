@@ -128,7 +128,8 @@ export default class UserService {
 
     async createUser(profile, root, options) {
         const userId = getUserName(profile);
-        const { emailAddress, accountId } = profile;
+        // const { emailAddress, accountId } = profile;
+        const { email: emailAddress, account_id: accountId } = profile;
         const optIsObj = options && typeof options === 'object';
         const apiUrl = !optIsObj ? options : undefined;
 

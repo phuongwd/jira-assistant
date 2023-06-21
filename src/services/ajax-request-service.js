@@ -11,7 +11,7 @@ export default class AjaxRequestService {
     constructor($browser) {
         this.$browser = $browser;
 
-        const headerObj = { 'Content-Type': 'application/json' };
+        const headerObj = { Accept: 'application/json' };
 
         // Jira has issue with some user agent. Hence always customize it for Firefox
         if (browser.isFirefox || browser.isEdge) {
@@ -58,8 +58,10 @@ export default class AjaxRequestService {
                 body: JSON.stringify(body),
                 headers,
                 credentials: withCredentials !== false && needsPermission !== false ? 'include' : 'omit',
-                referrerPolicy: 'no-referrer'
+                referrerPolicy: 'no-referrer',
             };
+
+          console.log("ressss", request)
 
             if (isAppBuild) {
                 return executeService('AjaxRequestService', 'execute', [url, request]);

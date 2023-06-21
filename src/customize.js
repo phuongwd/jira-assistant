@@ -49,7 +49,7 @@ const config = {
         }
     },
     settings: {
-        defaultIntegratUrl: ''
+        defaultIntegratUrl: 'https://vdql.atlassian.net'
     }
 };
 

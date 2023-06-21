@@ -11,10 +11,10 @@ export const GoogleOAuth = {
 
 export const AppVersionNo = 2.51;
 
-let AnalyticsTrackingId = "G-CJQYE6Q1JQ"; //"UA-108841109-1"; // This is for public tracking id
+let AnalyticsTrackingId = process.env.REACT_APP_GOOGLE_TAG_MANAGER; //"UA-108841109-1"; // This is for public tracking id
 
-if (process.env.NODE_ENV !== "production") { // While doing local development, this 
-    AnalyticsTrackingId = "G-CJQYE6Q1JQ";
+if (process.env.NODE_ENV !== "production") { // While doing local development, this
+    AnalyticsTrackingId = process.env.REACT_APP_GOOGLE_TAG_MANAGER;
 }
 
 export { AnalyticsTrackingId };

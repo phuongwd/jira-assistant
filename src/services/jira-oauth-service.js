@@ -44,6 +44,46 @@ export default class JiraAuthService extends BaseService {
         }
     }
 
+    async getJiraTokenExchange(authCode, refreshToken) {
+      let result;
+      try {
+        const params = {
+          "client_id": process.env.REACT_APP_JIRA_CLIENT_ID,
+          "client_secret": process.env.REACT_APP_JIRA_CLIENT_SECRET,
+          "redirect_uri": process.env.REACT_APP_JIRA_REDIRECT_URL
+        }
+        if(authCode) {
+          params.code = authCode;
+          params.grant_type = 'authorization_code';
+        } else if(refreshToken) {
+          params.grant_type = 'refresh_token';
+          params.refresh_token = refreshToken;
+        }
+        const { access_token,
+          expires_in,
+          token_type, refresh_token } = await this.$request.execute('POST', 'https://auth.atlassian.com/oauth/token', params);
+
+
+        // Get the cloudid for your site
+        const sites = await this.$request.execute('GET', 'https://api.atlassian.com/oauth/token/accessible-resources', null, {
+          'Authorization': `${token_type} ${access_token}`
+        })
+        console.log(sites)
+
+        return {
+          success: true,
+          token: access_token,
+          refresh_token: refresh_token,
+          expires_at: expires_in,
+          jiraUrl: sites[0].url,
+          cloudId: sites[0].id,
+          apiUrl: sites[0].url
+        }
+      } catch (ex) {
+        throw ex;
+      }
+    }
+
     // This function returns userid when it is not passed
     // and returns bearer token when user id is passed
     async getAndSaveToken(authCode, refreshToken, userId) {
@@ -51,9 +91,10 @@ export default class JiraAuthService extends BaseService {
         let result;
 
         try {
-            result = await this.$request.execute('GET', jaJiraTokenExchangeUrl, null,
-                authCode ? { withCredentials: false, 'jira-auth-code': authCode } :
-                    { withCredentials: false, 'jira-refresh-token': refreshToken });
+            result = await this.getJiraTokenExchange(authCode, refreshToken);
+            // result = await this.$request.execute('GET', jaJiraTokenExchangeUrl, null,
+            //     authCode ? { withCredentials: false, 'jira-auth-code': authCode } :
+            //         { withCredentials: false, 'jira-refresh-token': refreshToken });
         } catch (ex) {
             console.error('Error fectching jira cloud auth token', ex);
             throw ex;
@@ -67,6 +108,11 @@ export default class JiraAuthService extends BaseService {
 
         if (success) {
             if (!userId) {
+
+              // const profile = await this.$request.execute('GET',
+              //   'https://api.atlassian.com/me',
+              //   null, {...getBearerTokenHeader(token), Accept: 'application/json'});
+
                 const profile = await this.$request.execute('GET',
                     apiUrl.clearEnd('/') + ApiUrls.mySelf.substring(1),
                     null, getBearerTokenHeader(token));
@@ -106,7 +152,7 @@ export default class JiraAuthService extends BaseService {
         else if (user.apiUrl) {
             let auth = await this.$settings.getGeneralSetting(userId, 'JOAT');
             if (auth) {
-                // Handle simultaneous multi executions of 
+                // Handle simultaneous multi executions of
                 if (this._tokenRefreshRunning) {
                     await this._tokenRefreshRunning; // Wait for running promise to complete
                 }

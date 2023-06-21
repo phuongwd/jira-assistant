@@ -46,6 +46,12 @@ class ChooseAuthType extends PureComponent {
     basicAuthSelected = () => this.props.navigate('/integrate/basic');
 
     oAuthSelected = () => {
+      const url = getJiraCloudOAuthAuthorizeUrl({
+        initSource: buildMode,
+        authType: '2'
+      });
+
+      console.log("urrrr", url);
         Dialog.yesNo((<span>
             You will be redirected to Jira Cloud where you can Authorize Jira Assistant to access Jira API's.
             <br /><br />
