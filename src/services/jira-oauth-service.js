@@ -1,7 +1,7 @@
 import { executeService } from "../common/proxy";
 import { ApiUrls } from "../constants/api-urls";
 import { isAppBuild } from "../constants/build-info";
-import { jaJiraTokenExchangeUrl } from "../constants/oauth";
+// import { jaJiraTokenExchangeUrl } from "../constants/oauth";
 import BaseService from "./base-service";
 
 export default class JiraAuthService extends BaseService {
@@ -45,13 +45,12 @@ export default class JiraAuthService extends BaseService {
     }
 
     async getJiraTokenExchange(authCode, refreshToken) {
-      let result;
       try {
         const params = {
           "client_id": process.env.REACT_APP_JIRA_CLIENT_ID,
           "client_secret": process.env.REACT_APP_JIRA_CLIENT_SECRET,
           "redirect_uri": process.env.REACT_APP_JIRA_REDIRECT_URL
-        }
+        };
         if(authCode) {
           params.code = authCode;
           params.grant_type = 'authorization_code';
@@ -67,8 +66,8 @@ export default class JiraAuthService extends BaseService {
         // Get the cloudid for your site
         const sites = await this.$request.execute('GET', 'https://api.atlassian.com/oauth/token/accessible-resources', null, {
           'Authorization': `${token_type} ${access_token}`
-        })
-        console.log(sites)
+        });
+        console.log(sites);
 
         return {
           success: true,
@@ -78,7 +77,7 @@ export default class JiraAuthService extends BaseService {
           jiraUrl: sites[0].url,
           cloudId: sites[0].id,
           apiUrl: sites[0].url
-        }
+        };
       } catch (ex) {
         throw ex;
       }
